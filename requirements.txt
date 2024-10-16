@@ -1,0 +1,3 @@
+watchdog
+requests
+rank-torrent-name
