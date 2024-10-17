@@ -20,4 +20,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Command to run your script
-CMD ["python", "blackhole-ud.py"]
+CMD ["python", "blackhole.py"]
