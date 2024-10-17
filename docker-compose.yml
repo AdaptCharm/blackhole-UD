@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  blackhole-ud:
+    restart: unless-stopped
+    container_name: blackhole-ud
+    build: .
+    hostname: blackhole-ud
+    user: 1000:1000
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /opt/blackhole-ud:/app/config #path to this directory
+      - /etc/localtime:/etc/localtime:ro
+      - /mnt:/mnt #parent path to all mount directories. make sure /nzbs directory is within here too
