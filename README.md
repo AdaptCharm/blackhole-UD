@@ -1,6 +1,6 @@
 # Blackhole-UD
 
-Blackhole-UD is a Blackhole downloader designed for Usenet-Drive to manage compatible NZB files for Radarr, Sonarr, and Lidarr.</b>
+Blackhole-UD is a Blackhole downloader designed for Usenet-Drive to manage compatible NZB files for Radarr, Sonarr, and Lidarr.
 It will send incompatible NZB's to SABnzbd.
 
 ## Features
