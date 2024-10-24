@@ -110,14 +110,19 @@ def create_arr_subdirectories(config):
     import_dir = config.get('DEFAULT', 'nzb_import_directory')
     arr_sections = [section for section in config.sections() if 'arr' in section.lower()]
     
+    created_count = 0
     for section in arr_sections:
         arr_dir = os.path.join(import_dir, section.lower())
         completed_dir = os.path.join(arr_dir, 'completed')
-        ensure_directory_exists(arr_dir)
-        ensure_directory_exists(completed_dir)
-        logging.debug(f"Created directories for {section}: {arr_dir} and {completed_dir}")
+        if not os.path.exists(arr_dir):
+            ensure_directory_exists(arr_dir)
+            created_count += 1
+        if not os.path.exists(completed_dir):
+            ensure_directory_exists(completed_dir)
+            created_count += 1
+        logging.debug(f"Checked directories for {section}: {arr_dir} and {completed_dir}")
     
-    logging.info(f"Created subdirectories for {len(arr_sections)} 'arr' services")
+    return created_count
 
 def refresh_rclone_vfs(directory_path, config):
     import_dir = config.get('DEFAULT', 'nzb_import_directory')
@@ -178,31 +183,41 @@ def process_nzb_file(nzb_path, config):
     filename = os.path.basename(nzb_path)
     subdirectory = os.path.basename(os.path.dirname(nzb_path))
     
-    try:
-        is_compatible = is_compatible_nzb(nzb_path)
-        logging.debug(f"Is {filename} compatible? {is_compatible}")
-        
-        if is_compatible:
-            logging.info(f"{filename} is compatible. Processing...")
+    def attempt_processing(retry_count=0):
+        try:
+            is_compatible = is_compatible_nzb(nzb_path)
+            logging.debug(f"Is {filename} compatible? {is_compatible}")
             
-            # Move compatible file to completed directory
-            completed_dir = os.path.join(os.path.dirname(nzb_path), 'completed')
-            completed_path = os.path.join(completed_dir, filename)
-            try:
-                shutil.move(nzb_path, completed_path)
-                logging.info(f"Moved processed file to: {completed_path}")
+            if is_compatible:
+                logging.info(f"{filename} is compatible. Processing...")
                 
-                # Refresh rclone VFS for the completed directory only
-                refresh_rclone_vfs(completed_dir, config)
-                
-                logging.info(f"Processed compatible file: {filename}")
-            except Exception as e:
-                logging.error(f"Failed to move processed file {nzb_path}: {e}")
-        else:
-            logging.info(f"{filename} is not compatible. Sending to SABnzbd.")
-            send_to_sabnzbd(nzb_path, subdirectory, config)
-    except Exception as e:
-        logging.error(f"Error processing {filename}: {e}")
+                # Move compatible file to completed directory
+                completed_dir = os.path.join(os.path.dirname(nzb_path), 'completed')
+                completed_path = os.path.join(completed_dir, filename)
+                try:
+                    shutil.move(nzb_path, completed_path)
+                    logging.info(f"Moved processed file to: {completed_path}")
+                    
+                    # Refresh rclone VFS for the completed directory only
+                    refresh_rclone_vfs(completed_dir, config)
+                    
+                    logging.info(f"Processed compatible file: {filename}")
+                except Exception as e:
+                    logging.error(f"Failed to move processed file {nzb_path}: {e}")
+            else:
+                logging.info(f"{filename} is not compatible. Sending to SABnzbd.")
+                send_to_sabnzbd(nzb_path, subdirectory, config)
+            return True
+        except Exception as e:
+            if "no element found" in str(e).lower() and retry_count < 3:
+                logging.warning(f"NZB file {filename} appears incomplete. Retrying in 2 seconds...")
+                time.sleep(2)
+                return attempt_processing(retry_count + 1)
+            else:
+                logging.error(f"Error processing {filename}: {e}")
+                return False
+
+    attempt_processing()
 
 def start_monitoring(config):
     watch_directory = config.get('DEFAULT', 'nzb_import_directory')
@@ -211,8 +226,8 @@ def start_monitoring(config):
 
     observer.schedule(event_handler, watch_directory, recursive=True)
     observer.start()
-    logging.info(f"Started monitoring {watch_directory} (ignoring 'completed' directories)")
-    
+    logging.info(f"Started monitoring {watch_directory}")
+
     try:
         while True:
             time.sleep(1)
@@ -251,14 +266,13 @@ def main():
     ensure_directory_exists(watch_directory)
 
     # Create subdirectories for each 'arr' service
-    create_arr_subdirectories(config)
+    created_dirs = create_arr_subdirectories(config)
+    if created_dirs > 0:
+        logging.info(f"Created subdirectories for {created_dirs} *arr services")
     
     # Process existing NZB files
     process_existing_nzbs(config)
     
-    logging.info("Initializing watchdog...")
-    logging.info("NZB Blackhole is now running")
-
     start_monitoring(config)
 
 if __name__ == "__main__":
