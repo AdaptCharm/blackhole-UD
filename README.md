@@ -8,7 +8,7 @@ It will send incompatible NZB's to SABnzbd.
 - Automatic import and organization of NZB files
 - Integration with SABnzbd for download management
 - Support for multiple instances of Radarr, Sonarr, and Lidarr (including 4K and Anime versions)
-- Rclone integration for cloud storage management
+- Rclone integration
 
 ## Prerequisites
 
@@ -18,15 +18,14 @@ It will send incompatible NZB's to SABnzbd.
 - Radarr
 - Sonarr
 - Lidarr (optional)
-- Rclone (installed with Dockerfile)
 
 ## Configuration
 
 Edit the `config.ini` file in `/opt/blackhole-ud` to set up your specific configuration:
 
-- Set the correct API keys and URLs for SABnzbd, Radarr, Sonarr, and Lidarr instances
 - Configure the NZB import and root directories
-- Set up the Rclone VFS URL if you're using cloud storage
+- Set the correct API keys and URLs for SABnzbd, Radarr, Sonarr, and Lidarr instances
+- Set up the Rclone VFS URL
 
 ## Installation
 
