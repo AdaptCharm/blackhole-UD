@@ -66,8 +66,19 @@ Edit the `config.ini` file in `/opt/blackhole-ud` to set up your specific config
    ```
 ## Usage
 
+### Download Client Settings
+```
+Name: Blackhole-UD
+Enable: [x]
+NZB Folder: /mnt/nzbs/Import/radarr
+Watch Folder: /mnt/remote/usenet/Import/radarr/completed/
+Client Priority: 1
+```
 Once the container is running, it will automatically monitor the specified NZB import directory and organize files based on your configuration.
-I have added SABnzbd as a download client but I have created a tag on it so that nzb downloads do not go to sabnzbd straight away, instead it gets routed through the blackhole. If it is not compatible it will send it to sabnzbd with the category set by the parent folder it came from. Because it has been added as a download client, the arrs will monitor the download progress from there.
+
+I have added SABnzbd as a download client but I have created a tag on it so that nzb downloads do not go to sabnzbd straight away, instead it gets routed through the blackhole. If it is not compatible it will send it to sabnzbd with the category set by the parent folder it came from. 
+
+Because it has been added as a download client, the arrs will monitor the download progress from there.
 
 ## Import Script (optional)
 
