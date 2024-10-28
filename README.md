@@ -67,6 +67,25 @@ Edit the `config.ini` file in `/opt/blackhole-ud` to set up your specific config
 ## Usage
 
 Once the container is running, it will automatically monitor the specified NZB import directory and organize files based on your configuration.
+I have added SABnzbd as a download client but I have created a tag on it so that nzb downloads do not go to sabnzbd straight away, instead it gets routed through the blackhole. If it is not compatible it will send it to sabnzbd with the category set by the parent folder it came from. Because it has been added as a download client, the arrs will monitor the download progress from there.
+
+## Import Script (optional)
+
+I have added an import script `import.sh` to this repo that I use to control what happens on importing. I currently use this in conjunction with realdebrid and wanted a way to use both usenet-drive and RD together.
+
+If the file comes from `/symlinks`:
+- move the file as per normal importing operations.
+
+If the file comes from `/Import/radarr` or any other arr folder:
+- create the end path directory in the rclone usenet mount
+- move the file to the directory
+- create a symlink to /mnt/plex
+
+If the file comes from `/completed/radarr` or any other arr folder:
+- rclone copyto the usenet drive, this will upload it directly to usenet
+- create a symlink to /mnt/plex
+
+edit this script as per needed and then activate it in radarr > settings > media management > Import Using Script [x]
 
 ## Support
 
