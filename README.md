@@ -20,6 +20,14 @@ It will send incompatible NZB's to SABnzbd.
 - Lidarr (optional)
 - Rclone (installed with Dockerfile)
 
+## Configuration
+
+Edit the `config.ini` file in `/opt/blackhole-ud` to set up your specific configuration:
+
+- Set the correct API keys and URLs for SABnzbd, Radarr, Sonarr, and Lidarr instances
+- Configure the NZB import and root directories
+- Set up the Rclone VFS URL if you're using cloud storage
+
 ## Installation
 
 1. Clone this repository:
@@ -57,15 +65,6 @@ It will send incompatible NZB's to SABnzbd.
    ```
    docker-compose up -d
    ```
-
-## Configuration
-
-Edit the `config.ini` file in `/opt/blackhole-ud` to set up your specific configuration:
-
-- Set the correct API keys and URLs for SABnzbd, Radarr, Sonarr, and Lidarr instances
-- Configure the NZB import and root directories
-- Set up the Rclone VFS URL if you're using cloud storage
-
 ## Usage
 
 Once the container is running, it will automatically monitor the specified NZB import directory and organize files based on your configuration.
