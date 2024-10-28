@@ -257,7 +257,7 @@ def main():
     setup_logging(config)
 
     logging.info("Starting NZB Blackhole script")
-    logging.info(f"Version: 1.0")
+    logging.info(f"Version: 1.01")
     
     watch_directory = config.get('DEFAULT', 'nzb_import_directory')
     logging.info(f"Watching directory: {watch_directory}")
