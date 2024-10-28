@@ -28,9 +28,9 @@ except Exception as e:
 
 # List of streamable file extensions
 STREAMABLE_EXTENSIONS = [
-    '.mp4', '.mkv', '.avi', '.mov', '.wmv', '.webm', 
-    '.vob', '.wav', '.flac', '.ogg', '.aac', '.mp3', '.wma', '.alac', 
-    '.cbr', '.cbz', '.epub', '.m4b', '.aw3'
+    '.mp4', '.mkv', '.avi', '.mov', '.wmv', '.mpeg-ts', '.m2ts', '.ts', '.webm', 
+    '.iso', '.vob', '.wav', '.flac', '.ogg', '.aac', '.mp3', '.wma', '.alac', 
+    '.cbr', '.cbz', '.epub', '.m4b', '.aw3', '.m4a'
 ]
 
 # NZB Parsing logic
