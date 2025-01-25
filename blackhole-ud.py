@@ -20,8 +20,8 @@ try:
     nzbs_root_directory = config.get('DEFAULT', 'nzbs_root_directory')
     usenet_rclone_mount_directory = config.get('DEFAULT', 'usenet_rclone_mount_directory')
     RCLONE_VFS_URL = config['Rclone']['vfs_url']
-    SABNZBD_URL = config['SABnzbd']['url']
-    SABNZBD_API_KEY = config['SABnzbd']['api_key']
+#    SABNZBD_URL = config['SABnzbd']['url']
+#    SABNZBD_API_KEY = config['SABnzbd']['api_key']
 except Exception as e:
     logging.error(f"Error reading configuration: {e}")
     exit(1)
