@@ -145,27 +145,27 @@ def refresh_rclone_vfs(directory_path, config):
     except requests.RequestException as e:
         logging.error(f"Failed to refresh Rclone VFS for {refresh_path}: {e}")
 
-def send_to_sabnzbd(nzb_path, category, config):
-    try:
-        api_url = f"{config['SABnzbd']['url']}/api"
-        params = {
-            'apikey': config['SABnzbd']['api_key'],
-            'mode': 'addlocalfile',
-            'name': nzb_path,
-            'cat': category,
-            'output': 'json'
-        }
-        response = requests.get(api_url, params=params)
-        response.raise_for_status()
-        result = response.json()
-        
-        if result.get('status'):
-            logging.info(f"Successfully added {os.path.basename(nzb_path)} to SABnzbd with category {category}")
-            os.remove(nzb_path)  # Remove the file after successful processing
-        else:
-            logging.error(f"Failed to add {os.path.basename(nzb_path)} to SABnzbd. Error: {result.get('error', 'Unknown error')}")
-    except Exception as e:
-        logging.error(f"Error sending {os.path.basename(nzb_path)} to SABnzbd: {e}")
+# def send_to_sabnzbd(nzb_path, category, config):
+#    try:
+#        api_url = f"{config['SABnzbd']['url']}/api"
+#        params = {
+#            'apikey': config['SABnzbd']['api_key'],
+#            'mode': 'addlocalfile',
+#            'name': nzb_path,
+#            'cat': category,
+#            'output': 'json'
+#        }
+#        response = requests.get(api_url, params=params)
+#        response.raise_for_status()
+#        result = response.json()
+#        
+#        if result.get('status'):
+#            logging.info(f"Successfully added {os.path.basename(nzb_path)} to SABnzbd with category {category}")
+#            os.remove(nzb_path)  # Remove the file after successful processing
+#        else:
+#            logging.error(f"Failed to add {os.path.basename(nzb_path)} to SABnzbd. Error: {result.get('error', 'Unknown error')}")
+#    except Exception as e:
+#        logging.error(f"Error sending {os.path.basename(nzb_path)} to SABnzbd: {e}")
 
 class NZBHandler(FileSystemEventHandler):
     def __init__(self, config):
@@ -181,7 +181,6 @@ class NZBHandler(FileSystemEventHandler):
 
 def process_nzb_file(nzb_path, config):
     filename = os.path.basename(nzb_path)
-    subdirectory = os.path.basename(os.path.dirname(nzb_path))
     
     def attempt_processing(retry_count=0):
         try:
@@ -205,8 +204,8 @@ def process_nzb_file(nzb_path, config):
                 except Exception as e:
                     logging.error(f"Failed to move processed file {nzb_path}: {e}")
             else:
-                logging.info(f"{filename} is not compatible. Sending to SABnzbd.")
-                send_to_sabnzbd(nzb_path, subdirectory, config)
+                logging.warning(f"Incompatible NZB file detected: {filename}. File will be removed to prevent repeated processing.")
+                os.remove(nzb_path)  # Remove incompatible file
             return True
         except Exception as e:
             if "no element found" in str(e).lower() and retry_count < 3:
